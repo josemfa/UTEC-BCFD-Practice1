@@ -99,13 +99,17 @@ contract MiTokenParaVenta is ERC20, AccessControl {
         // verifica que caller tiene balance en USDC
         // usar usdc.balanceOf(msg.sender)
         // require(?, "No tiene suficiente UDSC");
+        require(usdc.balanceOf(msg.sender) >= _usdcAmount, "No tiene suficiente UDSC");
 
         // verifica que caller ha dado permiso al contrato MTPV
         // usar usdc.allowance(msg.sender, address(this))
         // require(?, "No tiene suficiente permiso");
+        require(usdc.allowance(msg.sender, address(this)) >= _usdcAmount, "No tiene suficiente permiso");
 
         // transfiere USDC del caller al contrato MTPV
         // usar usdc.transferFrom(from, to, amount)
+
+        usdc.transferFrom(msg.sender, address(this), _usdcAmount);
 
         // acuña tokens MTPV a favor del caller
         uint256 mtpvTokens = _getTokensByRate(_usdcAmount);
@@ -116,13 +120,17 @@ contract MiTokenParaVenta is ERC20, AccessControl {
         // verifica que caller tiene balance en USDC
         // usar usdc.balanceOf(msg.sender)
         // require(?, "No tiene suficiente UDSC");
+        require(usdc.balanceOf(msg.sender) >= _usdcAmount, "No tiene suficiente UDSC");
 
         // verifica que caller ha dado permiso al contrato MTPV
         // usar usdc.allowance(msg.sender, address(this))
         // require(?, "No tiene suficiente permiso");
+        require(usdc.allowance(msg.sender, address(this)) >= _usdcAmount, "No tiene suficiente permiso");
 
         // transfiere USDC del caller al contrato MTPV
         // usar usdc.transferFrom(from, to, amount)
+
+        usdc.transferFrom(msg.sender, address(this), _usdcAmount);
 
         // acuña tokens MTPV a favor del caller
         uint256 mtpvTokens = _getTokensByChange(_usdcAmount);
@@ -140,7 +148,7 @@ contract MiTokenParaVenta is ERC20, AccessControl {
     {
         // retorna aqui la cantidad de usdc que se deposita por el tipo de cambio exchangeRate
         // 1 USDC = 25 MTPV
-        return 0;
+        return 25*_usdcAmount;
     }
 
     function _getTokensByChange(uint256 _usdcAmount)
