@@ -149,7 +149,7 @@ interface IERC20 {
 }
 
 /**is IERC20, IERC20Metadata */
-contract TokenERC20_1 is IERC20, IERC20Metadata{
+contract TokenERC20_1 is IERC20, IERC20Metadata, AccessControlLearning{
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     uint256 totalMinted;
@@ -260,10 +260,26 @@ contract TokenERC20_1 is IERC20, IERC20Metadata{
         emit Transfer(msg.sender, address(0), amount);
     }
 
-    // EXTRA
-    // function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool){}
+   // 5. EXTRA:
 
-    // function increaseAllowance(address spender, uint256 addedValue) public  returns (bool){}
 
-    // function mintProtected(address to, uint256 amount) public onlyRole(MINTER_ROLE) {}
+
+    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool){
+        require(spender != address(0), "Spender no puede ser zero");
+        require(allowances_[msg.sender][spender] >= subtractedValue,"Cuenta no tiene suficientes tokens");
+        allowances_[msg.sender][spender] -= subtractedValue;
+        emit Approval(msg.sender, spender, allowances_[msg.sender][spender]);
+        return true;
+    }
+
+    function increaseAllowance(address spender, uint256 addedValue) public  returns (bool){
+        require(spender != address(0), "Spender no puede ser zero");
+        allowances_[msg.sender][spender] += addedValue;
+        emit Approval(msg.sender, spender, allowances_[msg.sender][spender]);
+        return true;
+    }
+
+    function mintProtected(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+        mint(to, amount);
+    }
 }
